@@ -12,7 +12,7 @@
 
 1. `app.py` sẽ chạy để tạo live server và kết nối đến database
 
-2. Tùy vào địa chỉ đang truy cập mà `app.py` sẽ đưa đến route đã đăng ký (chưa có thì sẽ bị lỗi ) và từ route đó mà sẽ đưa đến biến đã được import từ thư mục `endpoints`
+2. Tại `endpoints`, tùy vào địa chỉ đang truy cập mà `app.py` sẽ đưa đến route đã đăng ký (chưa có thì sẽ bị lỗi ) và từ route đó mà sẽ đưa đến biến đã được import từ thư mục `endpoints`
 3. Từ file đã trỏ vào từ định tuyến bên `app.py` mà sẽ tiếp tục trỏ qua route khác vào tùy vào chức năng đang sử dụng với service được import từ thư mục `services`
-4. Service đang được sẽ xử lý logic với việc lấy model của bảng dữ liệu thông qua file chứa định nghĩa model trong thư mục `models` và trả về file json cho bên Front-End làm việc
+4. Service đang được sử dụng sẽ xử lý logic với việc lấy model của bảng dữ liệu thông qua file chứa định nghĩa model trong thư mục `models` và trả về file json cho bên Front-End làm việc
 
