@@ -7,7 +7,7 @@ DB_CONFIG = {
     },
     "SQLSERVER": {
         "host": r"LAPTOP-7MQNI9Q0\SQLEXPRESS",
-        "database": "HUMAN_2025",
+        "database": "HUMAN",
         "driver": "{ODBC Driver 17 for SQL Server}"  # Đảm bảo driver này được cài đặt
     }
 }
