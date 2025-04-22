@@ -9,7 +9,7 @@ def add_employee_service(data):
 
     try:
         # Chuẩn bị dữ liệu chung
-        full_name = f"{data['first_name']} {data['last_name']}"
+        full_name = data['full_name']
         department_id = int(data['department_id'])
         position_id = int(data['position_id'])
         hire_date = datetime.strptime(data['hire_date'], "%Y-%m-%d").date()

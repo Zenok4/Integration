@@ -1,16 +1,25 @@
 from flask import Flask, jsonify, request
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
+from flask_session import Session
 from database import get_mysql_connection, get_sqlserver_connection
 from endpoints.employees_endpoints import employees_bp
+from endpoints.auth_endpoints import auth_bp
 from config import JWT_SECRET_KEY
 
 app = Flask(__name__)
 CORS(app)
+
+# Cấu hình session
+app.secret_key = "63f4945d921d599f27ae4fdf5bada3f1"
+app.config['SESSION_TYPE'] = 'filesystem'
+Session(app)
+
 app.config["JWT_SECRET_KEY"] = JWT_SECRET_KEY
 jwt = JWTManager(app)
 
 app.register_blueprint(employees_bp, url_prefix="/api/employees")
+app.register_blueprint(auth_bp, url_prefix="/api/auth")
 
 # ========== TEST CONNECTION FUNCTION ==========
 def test_connection():

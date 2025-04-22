@@ -1,10 +1,12 @@
 from flask import Blueprint, request, jsonify
 from services.get_list_employees_service import get_all_employees
 from services.add_employee_service import add_employee_service
+from middlewares.auth_middleware import role_required
 
 employees_bp = Blueprint("employees", __name__)  # Khởi tạo Blueprint
 
 @employees_bp.route("/", methods=["GET"])
+@role_required(["admin"])
 def get_list_employees():
     employees = get_all_employees()
     return jsonify(employees)
@@ -12,8 +14,11 @@ def get_list_employees():
 @employees_bp.route('/add-employee', methods=['POST'])
 def add_employee():
     REQUIRED_FIELDS = [
-    "first_name", "last_name", "email", "phone",
-    "hire_date", "department_id", "job_id", "salary", "applicant_id", "status"
+        "full_bane",
+        "email", "phone",
+        "date_of_birth", "gender",
+        "hire_date", "department_id",
+        "position_id", "status"
     ]
     
     try:
