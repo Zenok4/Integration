@@ -8,7 +8,7 @@ from endpoints.auth_endpoints import auth_bp
 from config import JWT_SECRET_KEY
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 
 # Cấu hình session
 app.secret_key = "63f4945d921d599f27ae4fdf5bada3f1"
@@ -18,8 +18,8 @@ Session(app)
 app.config["JWT_SECRET_KEY"] = JWT_SECRET_KEY
 jwt = JWTManager(app)
 
-app.register_blueprint(employees_bp, url_prefix="/api/employees")
-app.register_blueprint(auth_bp, url_prefix="/api/auth")
+app.register_blueprint(employees_bp, url_prefix="/employees")
+app.register_blueprint(auth_bp, url_prefix="/auth")
 
 # ========== TEST CONNECTION FUNCTION ==========
 def test_connection():

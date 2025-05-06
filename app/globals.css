@@ -1,26 +1,111 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #f8fafc;
+  --foreground: #1e293b;
+  --sidebar-background: #1e293b;
+  --header-color: #ffffff;
+  --primary: #3b82f6;
+  --secondary: #0ea5e9;
+  --accent: #8b5cf6;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --destructive: #ef4444;
+  --info: #3b82f6;
+  --card: #ffffff;
+  --card-foreground: #1e293b;
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --input: #f1f5f9;
+  --input-border: #cbd5e1;
+  --table-header-bg: #e0f2fe;
+  --table-header-text: #0c4a6e;
+  --table-border: #e2e8f0;
+  --table-hover: #f1f5f9;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+.font-dancing {
+  font-family: var(--font-dancing), cursive;
+}
+
+@layer components {
+  .menu-item {
+    @apply flex items-center w-[90%] px-3 py-2 rounded-xl transition-all duration-200 gap-4 text-gray-200 cursor-pointer;
+  }
+
+  .menu-item:hover {
+    @apply bg-slate-700 shadow;
+  }
+
+  .menu-item.active {
+    @apply bg-slate-600 shadow-md;
+  }
+
+  .btn {
+    @apply text-white rounded-lg px-3 py-2 transition-all duration-200 cursor-pointer;
+  }
+
+  .btn:hover {
+    @apply opacity-90 shadow-md;
+  }
+
+  .btn-edit {
+    @apply bg-[#10b981] text-white;
+  }
+
+  .btn-delete {
+    @apply bg-[#ef4444] text-white;
+  }
+
+  .btn-primary {
+    @apply bg-[#3b82f6] text-white;
+  }
+
+  .btn-secondary {
+    @apply bg-[#0ea5e9] text-white;
+  }
+
+  .btn-update {
+    @apply bg-[#f59e0b] text-white font-bold px-5 py-2.5 rounded-lg;
+  }
+
+  .btn-save {
+    @apply bg-[#10b981] text-white font-bold px-5 py-2.5 rounded-lg;
+  }
+
+  .btn-cancel {
+    @apply bg-[#ef4444] text-white font-bold px-5 py-2.5 rounded-lg;
+  }
+
+  .form-input {
+    @apply w-full p-2 text-base rounded border border-slate-300 bg-slate-50 focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] focus:outline-none transition-all duration-200;
+  }
+
+  .form-group {
+    @apply flex flex-col gap-1;
+  }
+
+  .form-label {
+    @apply font-medium text-slate-700;
+  }
+
+  .table-header {
+    @apply sticky top-0 bg-blue-100 text-blue-900 z-10;
+  }
+
+  .table-cell {
+    @apply text-center p-2.5 border-b border-slate-200;
+  }
+
+  .status-dot {
+    @apply w-2.5 h-2.5 rounded-full;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden transition-all duration-200 hover:shadow-lg;
+  }
 }
