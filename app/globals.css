@@ -1,31 +1,103 @@
 @import "tailwindcss";
 
+@theme inline {
+  --font-sans: system-ui, sans-serif;
+  --rounded-box: 1rem;
+  --rounded-btn: 0.5rem;
+  --rounded-badge: 1.9rem;
+
+  --blue-50: #eff6ff;
+  --blue-100: #dbeafe;
+  --blue-200: #bfdbfe;
+  --blue-300: #93c5fd;
+  --blue-400: #60a5fa;
+  --blue-500: #3b82f6;
+  --blue-600: #2563eb;
+  --blue-700: #1d4ed8;
+  --blue-800: #1e40af;
+  --blue-900: #1e3a8a;
+
+  --green-50: #f0fdf4;
+  --green-100: #dcfce7;
+  --green-200: #bbf7d0;
+  --green-300: #86efac;
+  --green-400: #4ade80;
+  --green-500: #22c55e;
+  --green-600: #16a34a;
+  --green-700: #15803d;
+  --green-800: #166534;
+  --green-900: #14532d;
+
+  --red-50: #fef2f2;
+  --red-100: #fee2e2;
+  --red-200: #fecaca;
+  --red-300: #fca5a5;
+  --red-400: #f87171;
+  --red-500: #ef4444;
+  --red-600: #dc2626;
+  --red-700: #b91c1c;
+  --red-800: #991b1b;
+  --red-900: #7f1d1d;
+
+  --amber-50: #fffbeb;
+  --amber-100: #fef3c7;
+  --amber-200: #fde68a;
+  --amber-300: #fcd34d;
+  --amber-400: #fbbf24;
+  --amber-500: #f59e0b;
+  --amber-600: #d97706;
+  --amber-700: #b45309;
+  --amber-800: #92400e;
+  --amber-900: #78350f;
+
+  --purple-50: #faf5ff;
+  --purple-100: #f3e8ff;
+  --purple-200: #e9d5ff;
+  --purple-300: #d8b4fe;
+  --purple-400: #c084fc;
+  --purple-500: #a855f7;
+  --purple-600: #9333ea;
+  --purple-700: #7e22ce;
+  --purple-800: #6b21a8;
+  --purple-900: #581c87;
+
+  --slate-50: #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1;
+  --slate-400: #94a3b8;
+  --slate-500: #64748b;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-800: #1e293b;
+  --slate-900: #0f172a;
+}
+
 :root {
-  --background: #f8fafc;
-  --foreground: #1e293b;
-  --sidebar-background: #1e293b;
-  --header-color: #ffffff;
-  --primary: #3b82f6;
-  --secondary: #0ea5e9;
-  --accent: #8b5cf6;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --destructive: #ef4444;
-  --info: #3b82f6;
-  --card: #ffffff;
-  --card-foreground: #1e293b;
+  --background-color: var(--slate-50);
+  --text-color: var(--slate-800);
+  --sidebar-color: var(--slate-800);
+  --header-color: white;
+  --primary-color: var(--blue-500);
+  --secondary-color: var(--blue-400);
+  --accent-color: var(--purple-500);
+  --success-color: var(--green-500);
+  --warning-color: var(--amber-500);
+  --danger-color: var(--red-500);
+  --info-color: var(--blue-500);
+  --card-bg: white;
   --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --input: #f1f5f9;
-  --input-border: #cbd5e1;
-  --table-header-bg: #e0f2fe;
-  --table-header-text: #0c4a6e;
-  --table-border: #e2e8f0;
-  --table-hover: #f1f5f9;
+  --input-bg: var(--slate-50);
+  --input-border: var(--slate-300);
+  --table-header-bg: var(--blue-100);
+  --table-header-text: var(--blue-900);
+  --table-border: var(--slate-200);
+  --table-hover: var(--slate-50);
 }
 
 body {
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
 .font-dancing {
@@ -34,7 +106,7 @@ body {
 
 @layer components {
   .menu-item {
-    @apply flex items-center w-[90%] px-3 py-2 rounded-xl transition-all duration-200 gap-4 text-gray-200 cursor-pointer;
+    @apply flex items-center w-[90%] px-3 py-2 rounded-xl transition-all duration-200 gap-4 text-slate-200 cursor-pointer;
   }
 
   .menu-item:hover {
@@ -54,35 +126,35 @@ body {
   }
 
   .btn-edit {
-    @apply bg-[#10b981] text-white;
+    @apply bg-[var(--success-color)] text-white;
   }
 
   .btn-delete {
-    @apply bg-[#ef4444] text-white;
+    @apply bg-[var(--danger-color)] text-white;
   }
 
   .btn-primary {
-    @apply bg-[#3b82f6] text-white;
+    @apply bg-[var(--primary-color)] text-white;
   }
 
   .btn-secondary {
-    @apply bg-[#0ea5e9] text-white;
+    @apply bg-[var(--secondary-color)] text-white;
   }
 
   .btn-update {
-    @apply bg-[#f59e0b] text-white font-bold px-5 py-2.5 rounded-lg;
+    @apply bg-[var(--warning-color)] text-white font-bold px-5 py-2.5 rounded-lg;
   }
 
   .btn-save {
-    @apply bg-[#10b981] text-white font-bold px-5 py-2.5 rounded-lg;
+    @apply bg-[var(--success-color)] text-white font-bold px-5 py-2.5 rounded-lg;
   }
 
   .btn-cancel {
-    @apply bg-[#ef4444] text-white font-bold px-5 py-2.5 rounded-lg;
+    @apply bg-[var(--danger-color)] text-white font-bold px-5 py-2.5 rounded-lg;
   }
 
   .form-input {
-    @apply w-full p-2 text-base rounded border border-slate-300 bg-slate-50 focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] focus:outline-none transition-all duration-200;
+    @apply w-full p-2 text-base rounded border border-slate-300 bg-slate-50 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-all duration-200;
   }
 
   .form-group {
@@ -94,7 +166,7 @@ body {
   }
 
   .table-header {
-    @apply sticky top-0 bg-blue-100 text-blue-900 z-10;
+    @apply sticky top-0 bg-[var(--table-header-bg)] text-[var(--table-header-text)] z-10;
   }
 
   .table-cell {

@@ -1,6 +1,8 @@
 from database import get_mysql_connection, get_sqlserver_connection
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import create_access_token
+from flask import session
+from datetime import datetime
 
 def login_user(username, password):
     conn = get_mysql_connection()
@@ -33,45 +35,83 @@ def login_user(username, password):
     }
 
 def create_user_with_employee(data):
+    sql_conn = None
+    sql_cursor = None
+    mysql_conn = None
+    mysql_cursor = None
+    employee_id = None
+
     try:
-        # ====== 1. Tạo nhân viên bên SQL Server ======
+        # ===== 1. Thêm nhân viên vào SQL Server =====
         sql_conn = get_sqlserver_connection()
         sql_cursor = sql_conn.cursor()
 
-        insert_employee_sql = """
-            INSERT INTO HUMAN_2025.dbo.Employees (
-                FullName, DateOfBirth, Gender, PhoneNumber, Email, HireDate, DepartmentID, PositionID, Status
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        # Chuyển đổi định dạng ngày tháng
+        date_of_birth = datetime.strptime(data["date_of_birth"], "%d-%m-%Y").strftime("%Y-%m-%d")
+        hire_date = datetime.strptime(data["hire_date"], "%d-%m-%Y").strftime("%Y-%m-%d")
+
+        insert_sqlserver = """
+            INSERT INTO Employees (
+                FullName, DateOfBirth, Gender, PhoneNumber, Email,
+                HireDate, DepartmentID, PositionID, Status
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """
 
-        employee_values = (
+        department_id = None if data.get("department_id") == "" else data.get("department_id")
+        position_id = None if data.get("position_id") == "" else data.get("position_id")
+
+        sqlserver_values = (
             data["full_name"],
-            data["date_of_birth"],
+            date_of_birth,
             data["gender"],
             data["phone_number"],
             data["email"],
-            data["hire_date"],
-            data["department_id"],
-            data["position_id"],
+            hire_date,
+            department_id,
+            position_id,
             data.get("status", "active")
         )
 
-        sql_cursor.execute(insert_employee_sql, employee_values)
+        # Thực hiện INSERT
+        sql_cursor.execute(insert_sqlserver, sqlserver_values)
+
+        # Sử dụng @@IDENTITY để lấy EmployeeID
+        sql_cursor.execute("SELECT @@IDENTITY AS EmployeeID")
+        result = sql_cursor.fetchone()
+        if not result or result[0] is None:
+            raise Exception("Failed to retrieve EmployeeID from SQL Server using @@IDENTITY")
+        employee_id = result[0]
+        print(f"Retrieved EmployeeID: {employee_id}")  # Gỡ lỗi
+
         sql_conn.commit()
+        print("SQL Server commit successful")  # Gỡ lỗi
 
-        # 🔎 Lấy ID của nhân viên vừa tạo
-        sql_cursor.execute("SELECT SCOPE_IDENTITY()")
-        employee_id = sql_cursor.fetchone()[0]
-
-        # ====== 2. Tạo tài khoản bên MySQL ======
+        # ===== 2. Thêm nhân viên vào MySQL =====
         mysql_conn = get_mysql_connection()
         mysql_cursor = mysql_conn.cursor(dictionary=True)
 
+        insert_mysql_employee = """
+            INSERT INTO employees (
+                EmployeeID, FullName, DepartmentID, PositionID, Status
+            ) VALUES (%s, %s, %s, %s, %s)
+        """
+        mysql_employee_values = (
+            employee_id,
+            data["full_name"],
+            department_id,
+            position_id,
+            data.get("status", "active")
+        )
+
+        mysql_cursor.execute(insert_mysql_employee, mysql_employee_values)
+
+        # ===== 3. Kiểm tra username đã tồn tại =====
         mysql_cursor.execute("SELECT * FROM users WHERE username = %s", (data["username"],))
         if mysql_cursor.fetchone():
+            mysql_conn.rollback()
             return {"error": "Username already exists"}
 
+        # ===== 4. Tạo user mới =====
         password_hash = generate_password_hash(data["password"])
 
         insert_user_sql = """
@@ -96,10 +136,8 @@ def create_user_with_employee(data):
         }
 
     except Exception as e:
-        if sql_conn:
-            sql_conn.rollback()
-        if mysql_conn:
-            mysql_conn.rollback()
+        if sql_conn: sql_conn.rollback()
+        if mysql_conn: mysql_conn.rollback()
         return {"error": str(e)}
 
     finally:

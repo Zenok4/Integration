@@ -4,7 +4,8 @@ const API = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL, // địa chỉ Flask backend
   headers: {
     'Content-Type': 'application/json'
-  }
+  },
+  withCredentials: true, // Đảm bảo gửi cookie
 });
 
 // Gắn token nếu có

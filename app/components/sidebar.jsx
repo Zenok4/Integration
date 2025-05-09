@@ -14,7 +14,7 @@ export default function Sidebar() {
     { icon: Calendar, text: "Chấm công & vắng mặt", href: "/cham-cong" },
     { icon: BarChart2, text: "Báo cáo & phân tích", href: "/bao-cao" },
     { icon: Bell, text: "Cảnh báo & thông báo", href: "/thong-bao" },
-    { icon: Settings, text: "Cài đặt & phân quyền", href: "/cai-dat" },
+    { icon: Settings, text: "Cài đặt", href: "/cai-dat" },
   ]
 
   const isActive = (href) => {
@@ -24,8 +24,10 @@ export default function Sidebar() {
     return pathname.startsWith(href)
   }
 
+  const classN = pathname === "/login" ? "w-0" : "w-64 h-full bg-slate-800 flex flex-col items-start pt-2.5 flex-shrink-0 overflow-y-auto"
+
   return (
-    <div className="w-64 h-full bg-slate-800 flex flex-col items-start pt-2.5 flex-shrink-0 overflow-y-auto">
+    <div className={classN}>
       <div className="flex justify-center items-center mt-5 mb-8 w-full">
         <div className="bg-blue-500 rounded-full p-2">
           <User className="stroke-white" size={40} />

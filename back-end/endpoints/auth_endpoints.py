@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, session
 from services.auth_service import login_user, create_user_with_employee
 from middlewares.auth_middleware import role_required
+from datetime import timedelta
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -18,14 +19,18 @@ def login():
     if "error" in result:
         return jsonify(result), 401
 
-    # Lưu session
+    # Thiết lập thời gian tồn tại của session
     session.permanent = True
+
+    # Lưu session
     session["user"] = {
         "id": result["user"]["id"],
         "username": result["user"]["username"],
         "role": result["user"]["role"],
         "employee_id": result["user"].get("employee_id")
     }
+
+    print(f"Session lưu: {session['user']}")  # Debug
 
     return jsonify({
         "message": "Login successful",
@@ -34,12 +39,12 @@ def login():
     })
 
 @auth_bp.route("/create-user", methods=["POST"])
-@role_required(["admin", "hr_manager"])
+# @role_required(["admin", "hr_manager"])
 def create_user():
     data = request.get_json()
     required_fields = [
         "username", "password", "full_name", "email", "date_of_birth", "gender",
-        "phone_number", "hire_date", "department_id", "position_id"
+        "phone_number", "hire_date",
     ]
 
     missing = [f for f in required_fields if f not in data or not data[f]]
@@ -54,7 +59,9 @@ def create_user():
 
 @auth_bp.route("/me", methods=["GET"])
 def current_user():
+    print(f"Session: {session}")
     user = session.get("user")
+    print(f"Session retrieved: {user}")
     if not user:
         return jsonify({"error": "Not logged in"}), 401
     return jsonify({"user": user})

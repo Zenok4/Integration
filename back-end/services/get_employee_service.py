@@ -1,6 +1,6 @@
 from database import get_mysql_connection, get_sqlserver_connection
 
-def get_employee(employee_ids=None):
+def get_employee_byID(employee_ids=None):
     """Chỉ lấy nhân viên có trong cả MySQL và SQL Server"""
 
     # 🔹 Lấy danh sách nhân viên từ MySQL
