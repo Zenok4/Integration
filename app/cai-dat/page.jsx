@@ -12,7 +12,7 @@ export default function SettingsPage() {
 
   // State cho chỉnh sửa profile
   const [isEditing, setIsEditing] = useState(false);
-  const [editedProfile, setEditedProfile] = useState(profile);
+  const [editedProfile, setEditedProfile] = useState(profile || {});
 
   // State cho thay đổi mật khẩu
   const [showPasswordSection, setShowPasswordSection] = useState(false);
@@ -30,39 +30,26 @@ export default function SettingsPage() {
         // console.log("User Data:", response.data.user)
         const employeeID = response.data.user.employee_id;
         const userData = await API.get("/employees/get-employee/" + employeeID);
-        console.log("User Data:", userData.data);
         setProfile((prevProfile) => ({
           ...prevProfile,
           ...userData.data.sqlserver,
         }));
         setEditedProfile(userData.data.sqlserver);
-        console.log("Profile Data:", profile);
       }
     } catch (error) {
       console.error("Error fetching profile:", error);
     }
   };
 
-  console.log("Profile Data:", profile);
-
   useEffect(() => {
     fetchProfile();
   }, []);
 
-  // Lấy thông tin profile từ localStorage khi component mount
   useEffect(() => {
-    try {
-      // Lấy thông tin profile từ localStorage nếu có
-      const savedProfile = localStorage.getItem("userProfile");
-      if (savedProfile) {
-        const parsedProfile = JSON.parse(savedProfile);
-        setProfile(parsedProfile);
-        setEditedProfile(parsedProfile);
-      }
-    } catch (error) {
-      console.error("Error accessing localStorage:", error);
-    }
-  }, []);
+  if (profile) {
+    setEditedProfile(profile);
+  }
+}, [profile]);
 
   // Xử lý khi thay đổi thông tin profile
   const handleProfileChange = (e) => {
@@ -76,9 +63,16 @@ export default function SettingsPage() {
   // Xử lý khi lưu thông tin profile
   const saveProfile = () => {
     try {
+      const response = API.put("/auth/profile/update", {
+        full_name: editedProfile?.FullName,
+        email: editedProfile?.Email,
+        phone_number: editedProfile?.PhoneNumber,
+      });
+
+      console.log("Profile Data:", response);
+
       setProfile(editedProfile);
       setIsEditing(false);
-      localStorage.setItem("userProfile", JSON.stringify(editedProfile));
       alert("Thông tin cá nhân đã được cập nhật!");
     } catch (error) {
       console.error("Error saving profile:", error);
@@ -96,7 +90,7 @@ export default function SettingsPage() {
   };
 
   // Xử lý khi lưu mật khẩu mới
-  const savePassword = (e) => {
+  const savePassword = async (e) => {
     e.preventDefault();
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
@@ -104,14 +98,24 @@ export default function SettingsPage() {
       return;
     }
 
-    // Trong thực tế, bạn sẽ gửi request API để thay đổi mật khẩu
-    alert("Mật khẩu đã được thay đổi thành công!");
-    setPasswordData({
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    });
-    setShowPasswordSection(false);
+    try {
+      const password_data = {
+        current_password: passwordData.currentPassword,
+        new_password: passwordData.newPassword,
+        confirm_password: passwordData.confirmPassword,
+      };
+      const response = await API.post("/auth/change-password", password_data);
+      console.log("Response:", response);
+      alert("Mật khẩu đã được thay đổi thành công!");
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      setShowPasswordSection(false);
+    } catch (error) {
+      console.error("Error changing password:", error);
+    }
   };
 
   const logout = async () => {
@@ -170,7 +174,9 @@ export default function SettingsPage() {
               <h3 className="font-medium mt-2 text-slate-800">
                 {profile?.FullName}
               </h3>
-              <p className="text-sm text-blue-600">{profile?.position || profile?.user?.role}</p>
+              <p className="text-sm text-blue-600">
+                {profile?.position || profile?.user?.role}
+              </p>
             </div>
 
             {/* Thông tin */}
@@ -183,7 +189,7 @@ export default function SettingsPage() {
                   {isEditing ? (
                     <input
                       type="text"
-                      name="fullName"
+                      name="FullName"
                       value={editedProfile?.FullName}
                       onChange={handleProfileChange}
                       className="form-input"
@@ -200,7 +206,7 @@ export default function SettingsPage() {
                   {isEditing ? (
                     <input
                       type="email"
-                      name="email"
+                      name="Email"
                       value={editedProfile?.Email}
                       onChange={handleProfileChange}
                       className="form-input"
@@ -217,7 +223,7 @@ export default function SettingsPage() {
                   {isEditing ? (
                     <input
                       type="tel"
-                      name="phone"
+                      name="PhoneNumber"
                       value={editedProfile?.PhoneNumber}
                       onChange={handleProfileChange}
                       className="form-input"
@@ -238,6 +244,7 @@ export default function SettingsPage() {
                       value={editedProfile?.department}
                       onChange={handleProfileChange}
                       className="form-input"
+                      readOnly
                     />
                   ) : (
                     <p className="text-slate-800">{profile?.department}</p>
@@ -255,9 +262,12 @@ export default function SettingsPage() {
                       value={editedProfile?.position}
                       onChange={handleProfileChange}
                       className="form-input"
+                      readOnly
                     />
                   ) : (
-                    <p className="text-slate-800">{profile?.position || profile?.user?.role}</p>
+                    <p className="text-slate-800">
+                      {profile?.position || profile?.user?.role}
+                    </p>
                   )}
                 </div>
               </div>

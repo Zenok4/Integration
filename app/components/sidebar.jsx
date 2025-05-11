@@ -1,30 +1,65 @@
-"use client"
+"use client";
 
-import { Home, Users, DollarSign, Calendar, BarChart2, Bell, Settings, User } from "lucide-react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import {
+  Home,
+  Users,
+  DollarSign,
+  Calendar,
+  BarChart2,
+  Bell,
+  Settings,
+  User,
+  UserCog,
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useAuth } from "../context/AuthContext";
+import { useEffect, useState } from "react";
 
 export default function Sidebar() {
-  const pathname = usePathname()
+  const [role, setRole] = useState("");
+
+  const pathname = usePathname();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    setRole(user?.role);
+  }, [user]);
+
+  console.log(role);
 
   const menuItems = [
     { icon: Home, text: "Bảng tổng quát", href: "/" },
-    { icon: Users, text: "Quản lý nhân viên", href: "/nhan-vien" },
-    { icon: DollarSign, text: "Quản lý lương", href: "/luong" },
-    { icon: Calendar, text: "Chấm công & vắng mặt", href: "/cham-cong" },
-    { icon: BarChart2, text: "Báo cáo & phân tích", href: "/bao-cao" },
+    ...(role === "admin" || "hr_manager" || "payroll_manager"
+      ? [{ icon: Users, text: "Quản lý nhân viên", href: "/nhan-vien" }]
+      : []),
+    ...(role === "admin" || "payroll_manager" || "hr_manager"
+      ? [{ icon: DollarSign, text: "Quản lý lương", href: "/luong" }]
+      : []),
+    ...(role === "admin" || "hr_manager" || "payroll_manager"
+      ? [{ icon: Calendar, text: "Chấm công & vắng mặt", href: "/cham-cong" }]
+      : []),
+    ...(role === "admin" || "hr_manager" || "payroll_manager"
+      ? [{ icon: BarChart2, text: "Báo cáo & phân tích", href: "/bao-cao" }]
+      : []),
     { icon: Bell, text: "Cảnh báo & thông báo", href: "/thong-bao" },
+    ...(role === "admin"
+      ? [{ icon: UserCog, text: "Quản lý tài khoản", href: "/tai-khoan" }]
+      : []),
     { icon: Settings, text: "Cài đặt", href: "/cai-dat" },
-  ]
+  ];
 
   const isActive = (href) => {
     if (href === "/") {
-      return pathname === "/"
+      return pathname === "/";
     }
-    return pathname.startsWith(href)
-  }
+    return pathname.startsWith(href);
+  };
 
-  const classN = pathname === "/login" ? "w-0" : "w-64 h-full bg-slate-800 flex flex-col items-start pt-2.5 flex-shrink-0 overflow-y-auto"
+  const classN =
+    pathname === "/login"
+      ? "w-0"
+      : "w-64 h-full bg-slate-800 flex flex-col items-start pt-2.5 flex-shrink-0 overflow-y-auto";
 
   return (
     <div className={classN}>
@@ -46,13 +81,24 @@ export default function Sidebar() {
               }
             `}
           >
-            <item.icon size={20} className={isActive(item.href) ? "text-blue-400" : "text-slate-400"} />
-            <p className={`text-sm ${isActive(item.href) ? "font-medium text-white" : "text-slate-300"}`}>
+            <item.icon
+              size={20}
+              className={
+                isActive(item.href) ? "text-blue-400" : "text-slate-400"
+              }
+            />
+            <p
+              className={`text-sm ${
+                isActive(item.href)
+                  ? "font-medium text-white"
+                  : "text-slate-300"
+              }`}
+            >
               {item.text}
             </p>
           </div>
         </Link>
       ))}
     </div>
-  )
+  );
 }

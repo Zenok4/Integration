@@ -7,7 +7,7 @@ export default function AddEmployee() {
     <div className="p-5">
       <div>
         <div className="w-full h-10 flex items-center justify-center rounded-lg shadow-md bg-amber-300">
-          <div className="w-[150px] h-full flex items-center font-bold">
+          <div className="w-full h-full flex items-center justify-center font-bold">
             <Link href="/nhan-vien" className="text-purple-900 hover:text-blue-600 transition-colors">
               Danh sách nhân viên
             </Link>
@@ -45,7 +45,7 @@ export default function AddEmployee() {
                   <label>Số điện thoại</label>
                 </div>
                 <div className="w-full">
-                  <input type="number" placeholder="Nhập số điện thoại" className="form-input" />
+                  <input type="tel" placeholder="Nhập số điện thoại" className="form-input" />
                 </div>
               </div>
             </div>

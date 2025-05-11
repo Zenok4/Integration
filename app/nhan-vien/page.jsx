@@ -15,7 +15,7 @@ export default function EmployeeList() {
           </Link>
         </div>
 
-        <div className="overflow-y-auto max-h-[590px]">
+        <div className="overflow-y-auto max-h-[525px]">
           <table className="w-full border-collapse">
             <thead>
               <tr className="table-header">
