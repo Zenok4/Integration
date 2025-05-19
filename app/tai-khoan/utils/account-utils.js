@@ -7,52 +7,59 @@ export const departments = [
   { id: 5, name: "Marketing" },
   { id: 6, name: "Kinh doanh" },
   { id: 7, name: "Hành chính" },
-]
+];
 
 // Danh sách chức vụ (dạng object có id)
 export const positions = [
   { id: 1, name: "Trưởng phòng" },
   { id: 2, name: "Phó phòng" },
-  { id: 3, name: "Nhân viên chính" },
   { id: 4, name: "Nhân viên" },
-]
+];
 
 // Các hằng số và hàm helper khác giữ nguyên
-export const roles = ["admin", "hr_manager", "payroll_manager", "employee"]
-export const statuses = ["active", "inactive"]
-export const genders = ["Nam", "Nữ", "Khác"]
+export const roles = ["admin", "hr_manager", "payroll_manager", "employee"];
+export const statuses = ["active", "inactive"];
+export const genders = ["Nam", "Nữ", "Khác"];
 
 export const getRoleName = (role) => {
   switch (role) {
-    case "admin": return "Quản trị viên"
-    case "hr_manager": return "Quản lý nhân sự"
-    case "payroll_manager": return "Quản lý lương"
-    case "employee": return "Nhân viên"
-    default: return role
+    case "admin":
+      return "Quản trị viên";
+    case "hr_manager":
+      return "Quản lý nhân sự";
+    case "payroll_manager":
+      return "Quản lý lương";
+    case "employee":
+      return "Nhân viên";
+    default:
+      return role;
   }
-}
+};
 
 export const getStatusName = (status) => {
   switch (status) {
-    case "active": return "Hoạt động"
-    case "inactive": return "Không hoạt động"
-    default: return status
+    case "active":
+      return "Hoạt động";
+    case "inactive":
+      return "Không hoạt động";
+    default:
+      return status;
   }
-}
+};
 
 // Hàm định dạng ngày từ chuỗi GMT thành định dạng ngày tháng năm
 export const formatDate = (dateString) => {
-  if (!dateString) return ""
-  const date = new Date(dateString)
-  return date.toLocaleDateString("vi-VN")
-}
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("vi-VN");
+};
 
 // Hàm định dạng ngày từ chuỗi GMT thành định dạng yyyy-MM-dd cho input type="date"
 export const formatDateForInput = (dateString) => {
-  if (!dateString) return ""
-  const date = new Date(dateString)
-  return date.toISOString().split("T")[0]
-}
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toISOString().split("T")[0];
+};
 
 // Dữ liệu mẫu - cập nhật vai trò finance_manager thành payroll_manager
 export const sampleAccounts = [
@@ -152,7 +159,7 @@ export const sampleAccounts = [
       PositionID: null,
     },
   },
-]
+];
 
 // Tạo tài khoản mới trống
 export const getEmptyAccount = () => ({
@@ -169,4 +176,4 @@ export const getEmptyAccount = () => ({
   hire_date: "",
   DepartmentID: null,
   PositionID: null,
-})
+});

@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Link from "next/link"
 import { Eye, EyeOff, User, Lock } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "../../context/AuthContext"
@@ -154,13 +153,6 @@ export default function LoginPage() {
               >
                 {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
               </button>
-            </div>
-
-            <div className="text-center text-sm text-slate-600">
-              Chưa có tài khoản?{" "}
-              <Link href="/register" className="font-medium text-blue-600 hover:text-blue-500">
-                Đăng ký ngay
-              </Link>
             </div>
           </form>
         </div>

@@ -1,175 +1,190 @@
+"use client";
+import { useEffect, useState } from "react";
+import { useDepartments } from "../hooks/get-departments-hook";
+import API from "../services/api";
+import { usePositions } from "../hooks/get-position-hook";
+
 export default function Attendance() {
-    return (
-      <div className="p-5">
-        <div className="title">
-          <h3 className="text-xl font-bold">BẢNG CÔNG</h3>
-        </div>
-  
-        <div className="mt-4">
-          <input
-            type="text"
-            placeholder="Nhập tên nhân viên hoặc mã id"
-            className="w-full rounded-md h-10 bg-gray-100 text-gray-700 border-none text-base px-3"
-          />
-        </div>
-  
-        <div className="h-10 w-full mt-5 flex items-center justify-between flex-1">
-          <div className="h-full w-[40%]">
-            <select
-              id="monthYearSelect"
-              defaultValue=""
-              className="w-full h-full bg-gray-100 border-none rounded text-gray-700"
-            >
-              <option value="2023-05">Tháng 5 / 2023</option>
-              <option value="2023-06">Tháng 6 / 2023</option>
-              <option value="2023-07">Tháng 7 / 2023</option>
-              <option value="2023-08">Tháng 8 / 2023</option>
-              <option value="2023-09">Tháng 9 / 2023</option>
-            </select>
-          </div>
-  
-          <div className="w-[40%] h-full">
-            <select defaultValue="" className="h-full w-full text-base bg-gray-100 border-none rounded text-gray-700">
-              <option value="" disabled>
-                --Chọn phòng ban--
+  const [attendanceData, setAttendanceData] = useState([]);
+  const [selectedMonth, setSelectedMonth] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [departmentsFilter, setDepartmentsFilter] = useState(0);
+
+  const departments = useDepartments();
+  const positions = usePositions();
+
+  // Lấy tháng năm chấm công hiện tại
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth() + 1; // getMonth() is 0-based
+  const defaultMonthYear = `${currentYear}-${String(currentMonth).padStart(
+    2,
+    "0"
+  )}`;
+
+  // Lấy tháng năm chấm công của năm hiện tại
+  const months = Array.from({ length: 12 }, (_, i) => {
+    const month = i + 1;
+    return {
+      value: `${currentYear}-${String(month).padStart(2, "0")}`,
+      label: `Tháng ${month} / ${currentYear}`,
+    };
+  });
+
+  const handleFitterByMonth = async (e) => {
+    const monthValue = e.target.value;
+    setSelectedMonth(monthValue);
+    try {
+      const response = await API.get(`/attendance/month/${monthValue}`);
+      console.log("Attendance Data:", response.data.data);
+      setAttendanceData(response.data.data);
+    } catch (err) {
+      console.error("Error fetching attendance data:", err);
+    }
+  };
+
+  const fetchAttendanceData = async (month) => {
+    try {
+      const response = await API.get(`/attendance/month/${month}`);
+      const data = response.data.data;
+      setAttendanceData(data);
+      setFilteredData(data); // Ban đầu, dữ liệu hiển thị sẽ là toàn bộ dữ liệu
+    } catch (err) {
+      console.error("Error fetching attendance data:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchAttendanceData(defaultMonthYear);
+    setSelectedMonth(defaultMonthYear);
+  }, []);
+
+  const getDepartmentName = (departmentId) => {
+    if (departments[departmentId]) {
+      return departments[departmentId].DepartmentName;
+    }
+    return "";
+  };
+
+  const getPositionName = (positionId) => {
+    if (positions[positionId]) {
+      return positions[positionId].PositionName;
+    }
+    return "";
+  };
+
+  const filteredAttandance = attendanceData.filter((attendance) => {
+    // Kiểm tra điều kiện tìm kiếm theo EmployeeID hoặc FullName
+    const matchesSearch = attendance.EmployeeID == searchTerm || 
+                         attendance?.FullName.toLowerCase().includes(searchTerm.toLowerCase());
+
+    // Nếu departmentsFilter bằng 0 hoặc chưa chọn, chỉ áp dụng matchesSearch
+    if (parseInt(departmentsFilter) === 0) {
+        return matchesSearch;
+    }
+
+    // Nếu departmentsFilter khác 0, áp dụng cả matchesSearch và matchesDepartment
+    const matchesDepartment = parseInt(attendance.DepartmentID) === parseInt(departmentsFilter);
+    console.log("attendance:", matchesDepartment);
+    return matchesSearch && matchesDepartment;
+});
+
+  return (
+    <div className="p-5">
+      <div className="title">
+        <h3 className="text-xl font-bold">BẢNG CÔNG</h3>
+      </div>
+
+      <div className="mt-4">
+        <input
+          type="text"
+          placeholder="Nhập tên nhân viên hoặc mã id"
+          value={searchTerm}
+          className="w-full rounded-md h-10 bg-gray-100 text-gray-700 border-none text-base px-3"
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
+      <div className="h-10 w-full mt-5 flex items-center justify-between flex-1">
+        <div className="h-full w-[40%]">
+          <select
+            id="monthYearSelect"
+            defaultValue={defaultMonthYear}
+            name="AttendanceMonth"
+            className="w-full h-full bg-gray-100 border-none rounded text-gray-700 cursor-pointer"
+            onChange={handleFitterByMonth}
+          >
+            {months.map((month) => (
+              <option key={month.value} value={month.value}>
+                {month.label}
               </option>
-              <option value="ketoan">Phòng kế toán</option>
-              <option value="nhansu">Phòng nhân sự</option>
-              <option value="kithuat">Phòng kĩ thuật</option>
-              <option value="hanhchinh">Phòng hành chính</option>
-              <option value="marketing">Phòng marketing</option>
-              <option value="sanxuat">Phòng sản xuất</option>
-              <option value="cskh">Phòng chăm sóc khách hàng</option>
-            </select>
-          </div>
+            ))}
+          </select>
         </div>
-  
-        <div className="w-full h-[30px] mt-2.5 flex items-center gap-[45px]">
-          <div className="w-[7%] h-full flex items-center gap-2.5">
-            <div className="status-dot bg-green-500"></div>
-            <div>
-              <span className="text-sm">Đúng giờ</span>
-            </div>
-          </div>
-  
-          <div className="w-[21%] h-full flex items-center gap-2.5">
-            <div className="status-dot bg-amber-500"></div>
-            <div>
-              <span className="text-sm">Đi muộn / Về sớm / Quên checkout</span>
-            </div>
-          </div>
-  
-          <div className="w-[4%] h-full flex items-center gap-2.5">
-            <div className="status-dot bg-gray-400"></div>
-            <div>
-              <span className="text-sm">OT</span>
-            </div>
-          </div>
-  
-          <div className="w-[8%] h-full flex items-center gap-2.5">
-            <div className="status-dot bg-blue-700"></div>
-            <div>
-              <span className="text-sm">Có đơn từ</span>
-            </div>
-          </div>
-  
-          <div className="w-[7%] h-full flex items-center gap-2.5">
-            <div className="status-dot bg-cyan-500"></div>
-            <div>
-              <span className="text-sm">Nghỉ lễ</span>
-            </div>
-          </div>
-  
-          <div className="w-[8%] h-full flex items-center gap-2.5">
-            <div className="status-dot bg-red-600"></div>
-            <div>
-              <span className="text-sm">Phạm lỗi</span>
-            </div>
-          </div>
-        </div>
-  
-        <div className="h-[30px] flex items-center mt-1.5 font-bold text-gray-700">
-          <span>Có 20 thành viên trong danh sách</span>
-        </div>
-  
-        <div className="flex overflow-x-auto overflow-y-auto w-full h-[500px]">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr>
-                <th rowSpan={2} className="table-cell min-w-[170px] max-w-[200px]">
-                  Tên nhân viên
-                </th>
-                <th colSpan={31} className="table-cell">
-                  Ngày làm việc
-                </th>
-                <th colSpan={6} className="table-cell">
-                  Tổng
-                </th>
-              </tr>
-              <tr>
-                {Array(31)
-                  .fill(0)
-                  .map((_, index) => (
-                    <th key={index} className="table-cell min-w-[100px]">
-                      {index < 7 ? `Thứ ${index + 2}` : index === 6 ? "CN" : `Thứ ${(index % 7) + 2}`} - {index + 1}/07
-                    </th>
-                  ))}
-                <th className="table-cell min-w-[100px]">Số ngày làm đúng giờ</th>
-                <th className="table-cell min-w-[100px]">Số ngày đi muộn</th>
-                <th className="table-cell min-w-[100px]">Số ngày OT</th>
-                <th className="table-cell min-w-[100px]">Số ngày nghỉ có đơn</th>
-                <th className="table-cell min-w-[100px]">Số ngày nghỉ lễ</th>
-                <th className="table-cell min-w-[100px]">Số ngày phạm lỗi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Array(5)
-                .fill(0)
-                .map((_, index) => (
-                  <tr key={index}>
-                    <td className="p-2">
-                      <div className="font-bold">Nguyễn Thị A</div>
-                      <div className="w-10 h-5 bg-amber-300 rounded-[10px] text-center">001</div>
-                      <div>Kế toán</div>
-                      <div className="text-blue-800">Trưởng phòng</div>
-                    </td>
-                    {Array(31)
-                      .fill(0)
-                      .map((_, dayIndex) => (
-                        <td key={dayIndex} className="table-cell">
-                          <div className="flex items-center justify-center">
-                            <div
-                              className={`status-dot ${
-                                dayIndex % 7 === 0
-                                  ? "bg-green-500"
-                                  : dayIndex % 7 === 1
-                                    ? "bg-green-500"
-                                    : dayIndex % 7 === 2
-                                      ? "bg-amber-500"
-                                      : dayIndex % 7 === 3
-                                        ? "bg-green-500"
-                                        : dayIndex % 7 === 4
-                                          ? "bg-gray-400"
-                                          : dayIndex % 7 === 5
-                                            ? "bg-green-500"
-                                            : ""
-                              }`}
-                            ></div>
-                          </div>
-                        </td>
-                      ))}
-                    <td className="table-cell">22</td>
-                    <td className="table-cell">2</td>
-                    <td className="table-cell">5</td>
-                    <td className="table-cell">1</td>
-                    <td className="table-cell">0</td>
-                    <td className="table-cell">1</td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
+
+        <div className="w-[40%] h-full">
+          <select
+            defaultValue=""
+            name="department"
+            className="h-full w-full text-base bg-gray-100 border-none rounded text-gray-700 cursor-pointer"
+            onChange={(e) => setDepartmentsFilter(e.target.value)}
+          >
+            <option value="" disabled>
+              -- Chọn Phòng Ban --
+            </option>
+            {Object.values(departments).map((dept) => (
+              <option key={dept.DepartmentID} value={dept.DepartmentID}>
+                {dept.DepartmentName}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
-    )
-  }
-  
+
+      <div className="flex overflow-x-auto overflow-y-auto w-full max-h-[500px] mt-5 border-2 border-gray-300 rounded-md">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr>
+              <th className="table-cell min-w-[170px] max-w-[200px]">
+                Tên nhân viên
+              </th>
+              <th className="table-cell min-w-[100px]">Số ngày làm đúng giờ</th>
+              <th className="table-cell min-w-[100px]">Số ngày đi muộn</th>
+              <th className="table-cell min-w-[100px]">Số ngày nghỉ có đơn</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredAttandance.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="text-center py-4">
+                  Không có dữ liệu chấm công
+                </td>
+              </tr>
+            ) : (
+              filteredAttandance.map((item) => (
+                <tr key={item.AttendanceID}>
+                  <td className="p-2">
+                    <div className="flex gap-2 items-center">
+                      <div className="font-bold">{item.FullName}</div>
+                      <p className="w-10 h-5 bg-amber-300 rounded-[10px] flex justify-center items-center">
+                        {item.EmployeeID}
+                      </p>
+                    </div>
+                    <div>{getDepartmentName(item.DepartmentID)}</div>
+                    <div className="text-blue-800">
+                      {getPositionName(item.PositionID)}
+                    </div>
+                  </td>
+                  <td className="table-cell text-center">{item.WorkDays}</td>
+                  <td className="table-cell text-center">{item.AbsentDays}</td>
+                  <td className="table-cell text-center">{item.LeaveDays}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}

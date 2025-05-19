@@ -21,26 +21,15 @@ def add_employee_service(data):
         created_at = datetime.now()
         updated_at = datetime.now()
 
-        # 1. MySQL - Insert
-        mysql_sql = """
-            INSERT INTO employees (FullName, DepartmentID, PositionID, Status)
-            VALUES (%s, %s, %s, %s)
-        """
-        mysql_data = (full_name, department_id, position_id, status)
-        mysql_cursor.execute(mysql_sql, mysql_data)
-        mysql_conn.commit()
-        employee_id = mysql_cursor.lastrowid
-
-        # 2. SQL Server - Insert đầy đủ
+        # 1. SQL Server - Insert đầy đủ
         sql_server_sql = """
             INSERT INTO Employees (
-                EmployeeID, FullName, DateOfBirth, Gender, PhoneNumber, Email,
+                FullName, DateOfBirth, Gender, PhoneNumber, Email,
                 HireDate, DepartmentID, PositionID, Status, CreatedAt, UpdatedAt
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """
         sql_data = (
-            employee_id,
             full_name,
             dob,
             gender,
@@ -56,8 +45,21 @@ def add_employee_service(data):
         sqlserver_cursor.execute(sql_server_sql, sql_data)
         sqlserver_conn.commit()
 
+        # Lấy EmployeeID từ SQL Server
+        sqlserver_cursor.execute("SELECT @@IDENTITY AS id")
+        employee_id = sqlserver_cursor.fetchone()[0]
+
+        # 2. MySQL - Insert với EmployeeID lấy từ SQL Server
+        mysql_sql = """
+            INSERT INTO employees (EmployeeID, FullName, DepartmentID, PositionID, Status)
+            VALUES (%s, %s, %s, %s, %s)
+        """
+        mysql_data = (employee_id, full_name, department_id, position_id, status)
+        mysql_cursor.execute(mysql_sql, mysql_data)
+        mysql_conn.commit()
+
         return {
-            "message": "Employee added successfully",
+            "message": "Nhân viên được thêm thành công",
             "employee_id": employee_id
         }
 

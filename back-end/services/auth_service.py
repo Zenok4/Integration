@@ -249,13 +249,11 @@ def update_user_and_employee(user_id, data):
         # ====== 2. Cập nhật thông tin nhân viên trong MySQL ======
         update_mysql_employee = """
             UPDATE employees
-            SET FullName = %s, DepartmentID = %s, PositionID = %s, Status = %s
+            SET FullName = %s, Status = %s
             WHERE EmployeeID = %s
         """
         mysql_cursor.execute(update_mysql_employee, (
             data.get("full_name"),
-            data.get("department_id"),
-            data.get("position_id"),
             data.get("status", "active"),
             employee_id
         ))
@@ -268,7 +266,7 @@ def update_user_and_employee(user_id, data):
         update_sqlserver_employee = """
             UPDATE Employees
             SET FullName = ?, DateOfBirth = ?, Gender = ?, PhoneNumber = ?, Email = ?, 
-                HireDate = ?, DepartmentID = ?, PositionID = ?, Status = ?
+                HireDate = ?, Status = ?
             WHERE EmployeeID = ?
         """
         sqlserver_values = (
@@ -278,8 +276,6 @@ def update_user_and_employee(user_id, data):
             data.get("phone_number"),
             data.get("email"),
             data.get("hire_date"),
-            data.get("department_id"),
-            data.get("position_id"),
             data.get("status", "active"),
             employee_id
         )

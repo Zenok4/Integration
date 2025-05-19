@@ -5,6 +5,13 @@ from flask_session import Session
 from database import get_mysql_connection, get_sqlserver_connection
 from endpoints.employees_endpoints import employees_bp
 from endpoints.auth_endpoints import auth_bp
+from endpoints.payroll_endpoints import payroll_bp
+from endpoints.notification_endpoints import notification_bp
+from endpoints.department_endpoints import departments_bp
+from endpoints.positions_endpoint import positions_bp
+from endpoints.attendance_endpoints import attendance_bp
+from endpoints.payroll_alerts_endpoint import alerts_bp
+from endpoints.human_notifications_endpoints import notifications_bp
 from config import JWT_SECRET_KEY
 
 app = Flask(__name__)
@@ -26,6 +33,13 @@ CORS(app, supports_credentials=True)
 
 app.register_blueprint(employees_bp, url_prefix="/employees")
 app.register_blueprint(auth_bp, url_prefix="/auth")
+app.register_blueprint(payroll_bp, url_prefix="/salaries")
+app.register_blueprint(notification_bp, url_prefix="/notification")
+app.register_blueprint(departments_bp, url_prefix="/departments")
+app.register_blueprint(positions_bp, url_prefix="/positions")
+app.register_blueprint(attendance_bp, url_prefix="/attendance")
+app.register_blueprint(alerts_bp, url_prefix="/payroll-alerts")
+app.register_blueprint(notifications_bp, url_prefix="/human-notifications")
 
 # ========== TEST CONNECTION FUNCTION ==========
 def test_connection():

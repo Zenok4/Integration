@@ -181,3 +181,78 @@ body {
     @apply bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden transition-all duration-200 hover:shadow-lg;
   }
 }
+
+.notification-controls{
+    padding-left: 40px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+.notifications {
+    width: 100%;
+    max-height: 186px; /* Giới hạn chiều cao */
+    overflow-y: auto;  /* Cho phép cuộn dọc */
+    display: flex;
+    flex-direction: column; /* Để hiển thị các item theo chiều dọc */
+    gap: 10px; /* Khoảng cách giữa các item */
+    margin: 10px 0;
+}
+
+.notification-item {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.notification-item:hover{
+    cursor: pointer;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+.item-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0px 25px;
+}
+.bell-icon {
+    font-size: 18px;
+    color: #6b7280;
+}
+
+.message {
+    font-size: 14px;
+}
+
+.badge {
+    background-color: black;
+    color: white;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.date {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.card-amount{
+  padding-top: 15px;
+  padding: 0px 20px;
+  font-weight: bold;
+  font-size: 25px;
+}
+.card-date{
+  padding-top: 18px;
+  padding: 0px 20px;
+  color: grey;
+}
+.card-notification{
+  height: 330px;
+  width: 100%;
+  margin-top: 60px;
+  border-radius: 5px;
+  border: 0.5px solid rgb(200, 200, 200);
+}

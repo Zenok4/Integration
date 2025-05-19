@@ -30,16 +30,14 @@ export default function Sidebar() {
 
   const menuItems = [
     { icon: Home, text: "Bảng tổng quát", href: "/" },
-    ...(role === "admin" || "hr_manager" || "payroll_manager"
+    ...(role === "admin" || role === "hr_manager" || role === "payroll_manager"
       ? [{ icon: Users, text: "Quản lý nhân viên", href: "/nhan-vien" }]
       : []),
-    ...(role === "admin" || "payroll_manager" || "hr_manager"
+    { icon: DollarSign, text: "Bảng lương", href: "/bang-luong" },
+    ...(role === "admin" || role === "hr_manager" || role === "payroll_manager"
       ? [{ icon: DollarSign, text: "Quản lý lương", href: "/luong" }]
       : []),
-    ...(role === "admin" || "hr_manager" || "payroll_manager"
-      ? [{ icon: Calendar, text: "Chấm công & vắng mặt", href: "/cham-cong" }]
-      : []),
-    ...(role === "admin" || "hr_manager" || "payroll_manager"
+    ...(role === "admin" || role === "hr_manager" || role === "payroll_manager"
       ? [{ icon: BarChart2, text: "Báo cáo & phân tích", href: "/bao-cao" }]
       : []),
     { icon: Bell, text: "Cảnh báo & thông báo", href: "/thong-bao" },

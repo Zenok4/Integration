@@ -1,9 +1,41 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import API from "../../services/api"
+import { formatDate } from "@/app/tai-khoan/utils/account-utils";
+
 export default function SalaryHistory() {
+  const [history, setHistory] = useState([]);
+  const [month, setMonth] = useState("");
+
+  useEffect(() => {
+    fetchHistory();
+  }, [month]);
+
+  const fetchHistory = async () => {
+  try {
+    const res = await API.get("/salaries/payroll-report");
+    if (res.data && Array.isArray(res.data.payroll)) {
+      let data = res.data.payroll;
+      if (month) {
+        data = data.filter(item => item.SalaryMonth && item.SalaryMonth.startsWith(month));
+      }
+      setHistory(data);
+    } else {
+      setHistory([]);
+    }
+  } catch (err) {
+    console.error("Error fetching payroll data:", err);
+    setHistory([]);
+  }
+}
+
     return (
       <div className="p-5">
         <div className="flex items-center justify-between">
           <div className="h-10 w-[40%]">
-            <select id="monthYearSelect" className="w-full h-full bg-gray-100 border-none rounded text-gray-700">
+          <select id="monthYearSelect" className="w-full h-full bg-gray-100 border-none rounded text-gray-700" value={month} onChange={e => setMonth(e.target.value)}>
+            <option value="">Tất cả</option>
               <option value="2023-05">Tháng 5 / 2023</option>
               <option value="2023-06">Tháng 6 / 2023</option>
               <option value="2023-07">Tháng 7 / 2023</option>
@@ -30,15 +62,13 @@ export default function SalaryHistory() {
                 </tr>
               </thead>
               <tbody className="text-center">
-                {Array(15)
-                  .fill(0)
-                  .map((_, index) => (
+              {history.map((item, index) => (
                     <tr key={index}>
-                      <td className="table-cell">001</td>
-                      <td className="table-cell">20000000</td>
-                      <td className="table-cell">2000000</td>
-                      <td className="table-cell">500000</td>
-                      <td className="table-cell">20/5/2022</td>
+                  <td className="table-cell">{item.EmployeeID}</td>
+                  <td className="table-cell">{item.BaseSalary}</td>
+                  <td className="table-cell">{item.Bonus}</td>
+                  <td className="table-cell">{item.Deductions}</td>
+                  <td className="table-cell">{formatDate(item.SalaryMonth)}</td>
                     </tr>
                   ))}
               </tbody>

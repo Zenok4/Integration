@@ -170,12 +170,12 @@ export default function AccountManagement() {
   // Lọc tài khoản theo điều kiện tìm kiếm và bộ lọc
   const filteredAccounts = accounts.filter((account) => {
     const matchesSearch =
-      account.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      account.FullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      account.email.toLowerCase().includes(searchTerm.toLowerCase());
+      account?.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      account?.FullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      account?.email.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesRole = filterRole ? account.role === filterRole : true;
-    const matchesStatus = filterStatus ? account.Status === filterStatus : true;
+    const matchesRole = filterRole ? account?.role === filterRole : true;
+    const matchesStatus = filterStatus ? account?.Status === filterStatus : true;
     // Tạm thời bỏ qua lọc theo phòng ban vì DepartmentID là null
     const matchesDepartment = true;
 
